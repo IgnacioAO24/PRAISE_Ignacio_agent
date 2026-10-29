@@ -11,13 +11,13 @@ class ConsoleRenderer(IRenderer):
     def observe(self, statebuffer):
         self.environment_statebuffer = statebuffer
     
-    def render(self, force=False, titulo = "Tablero actual"):
+    def render(self, force=False, titulo="Tablero actual"):
         state = self.environment_statebuffer.get_state()
-        if state:
+        new_state = state is not None
+        if new_state:
             self.last_board = state["board"]
             self.cont += 1
-        if self.last_board and (self.cont % self.N == 0 or force):
+        if self.last_board and (force or (new_state and self.cont % self.N == 0)):
             print(f"\n{titulo}:")
             for row in self.last_board:
                 print(" ".join(str(v) if v != 0 else '.' for v in row))
-               
