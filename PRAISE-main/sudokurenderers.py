@@ -5,7 +5,7 @@ class ConsoleRenderer(IRenderer):
     def __init__(self):
         self.environment_statebuffer = {}
         self.cont = 0
-        self.N = 15
+        self.N = 10
         self.last_board = None
     
     def observe(self, statebuffer):

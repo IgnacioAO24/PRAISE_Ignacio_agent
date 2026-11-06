@@ -1,0 +1,1 @@
+           event_render_ready.clear()

@@ -1,11 +1,11 @@
 import os
+import time
 import threading
 from SudokuWorld import SudokuEnvironment
 from sudokuagent import SudokuAgent
 from boards import SudokuRepository
 from sudokurenderers import ConsoleRenderer
 from statebuffer import StateBuffer
-
 
 agent_finished_flag = False
 event_render_ready = threading.Event()
@@ -28,20 +28,18 @@ def chosen_difficulty():
 
 def agent_thread(agent):
     global agent_finished_flag
-    try:
-        while not agent.finished:
-            event_render_ready.wait(timeout=0.1)
-            agent.behave()
-            event_render_ready.clear()
-    finally:
-        # Si el agente falla, igual avisamos para que el renderer no quede colgado
-        agent_finished_flag = True
+    while not agent.finished:
+        event_render_ready.wait(timeout=0.1)
+        agent.behave()
+        event_render_ready.clear()
+    agent_finished_flag = True
 
 
 def render_thread(renderer):
     while not agent_finished_flag:
         renderer.render()
         event_render_ready.set()
+        time.sleep(0)  
 
 
 if __name__ == '__main__':
@@ -53,8 +51,8 @@ if __name__ == '__main__':
     env = SudokuEnvironment(board)
     agent = SudokuAgent(env)
     renderer = ConsoleRenderer()
-
     statebuffer = StateBuffer(agent.id, env)
+
     renderer.observe(statebuffer)
     renderer.render(force=True, titulo="Tablero inicial")
 
